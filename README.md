@@ -47,3 +47,11 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 - Run the test, see that it fails and check the error message is meaningful
 - Write enough code to make the test pass
 - Refactor
+
+## Documentation
+
+Open with:
+
+```bash
+pkgsite -open .
+```

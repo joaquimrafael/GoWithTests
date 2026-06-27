@@ -1,0 +1,52 @@
+package main
+
+import "testing"
+
+func TestPerimeter(t *testing.T) {
+
+	checkPerimeter := func(t testing.TB, shape Shape, want float64) {
+		t.Helper()
+		got := shape.Perimeter()
+		if got != want {
+			t.Errorf("got %g want %g", got, want)
+		}
+	}
+	t.Run("rectangles", func(t *testing.T) {
+		rectangle := Rectangle{10, 10}
+		checkPerimeter(t, &rectangle, 40.0)
+	})
+	t.Run("circles", func(t *testing.T) {
+		rectangle := Circle{10}
+		checkPerimeter(t, &rectangle, 62.83185307179586)
+	})
+
+	t.Run("triangles", func(t *testing.T) {
+		triangle := Triangle{5, 8}
+		checkPerimeter(t, &triangle, 0.0)
+	})
+}
+
+func TestArea(t *testing.T) {
+
+	areaTests := []struct {
+		name    string
+		shape   Shape
+		hasArea float64
+	}{
+		{name: "Rectangle", shape: &Rectangle{Width: 12, Height: 6}, hasArea: 72.0},
+		{name: "Circle", shape: &Circle{Radius: 10}, hasArea: 314.1592653589793},
+		{name: "Triangle", shape: &Triangle{Base: 12, Height: 6}, hasArea: 36.0},
+	}
+
+	for _, tt := range areaTests {
+		// using tt.name from the case to use it as the `t.Run` test name
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.shape.Area()
+			if got != tt.hasArea {
+				t.Errorf("%#v got %g want %g", tt.shape, got, tt.hasArea)
+			}
+		})
+
+	}
+
+}

@@ -1,11 +1,11 @@
 package main
 
-func Sum(numbers []int) int {
-	sum := 0
-	for _, number := range numbers {
-		sum += number
+func Reduce[A any](collection []A, f func(A, A) A, initialValue A) A {
+	var result = initialValue
+	for _, x := range collection {
+		result = f(result, x)
 	}
-	return sum
+	return result
 }
 
 func SumAll(numbersToSum ...[]int) []int {
@@ -17,15 +17,41 @@ func SumAll(numbersToSum ...[]int) []int {
 	return sums
 }
 
-func SumAllTails(numbersToSum ...[]int) []int {
-	var sums []int
-	for _, s := range numbersToSum {
-		if len(s) == 0 {
-			sums = append(sums, 0)
+// Sum calculates the total from a slice of numbers.
+func Sum(numbers []int) int {
+	add := func(acc, x int) int { return acc + x }
+	return Reduce(numbers, add, 0)
+}
+
+// SumAllTails calculates the sums of all but the first number given a collection of slices.
+func SumAllTails(numbers ...[]int) []int {
+	sumTail := func(acc, x []int) []int {
+		if len(x) == 0 {
+			return append(acc, 0)
 		} else {
-			sums = append(sums, Sum(s[1:]))
+			tail := x[1:]
+			return append(acc, Sum(tail))
 		}
 	}
 
-	return sums
+	return Reduce(numbers, sumTail, []int{})
+}
+
+type Transaction struct {
+	From string
+	To   string
+	Sum  float64
+}
+
+func BalanceFor(transactions []Transaction, name string) float64 {
+	var balance float64
+	for _, t := range transactions {
+		if t.From == name {
+			balance -= t.Sum
+		}
+		if t.To == name {
+			balance += t.Sum
+		}
+	}
+	return balance
 }

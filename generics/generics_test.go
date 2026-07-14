@@ -44,7 +44,7 @@ func TestStack(t *testing.T) {
 	})
 }
 
-func AssertEqual(t *testing.T, got, want interface{}) {
+func AssertEqual[T comparable](t *testing.T, got, want T) {
 	t.Helper()
 	if got != want {
 		t.Errorf("got %v, want %v", got, want)

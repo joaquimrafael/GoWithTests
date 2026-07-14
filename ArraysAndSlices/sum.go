@@ -1,6 +1,6 @@
 package main
 
-func Reduce[A any](collection []A, f func(A, A) A, initialValue A) A {
+func Reduce[A, B any](collection []A, f func(B, A) B, initialValue B) B {
 	var result = initialValue
 	for _, x := range collection {
 		result = f(result, x)
@@ -43,15 +43,38 @@ type Transaction struct {
 	Sum  float64
 }
 
-func BalanceFor(transactions []Transaction, name string) float64 {
-	var balance float64
-	for _, t := range transactions {
-		if t.From == name {
-			balance -= t.Sum
-		}
-		if t.To == name {
-			balance += t.Sum
+func NewTransaction(from, to Account, sum float64) Transaction {
+	return Transaction{From: from.Name, To: to.Name, Sum: sum}
+}
+
+type Account struct {
+	Name    string
+	Balance float64
+}
+
+func NewBalanceFor(account Account, transactions []Transaction) Account {
+	return Reduce(
+		transactions,
+		applyTransaction,
+		account,
+	)
+}
+
+func applyTransaction(a Account, transaction Transaction) Account {
+	if transaction.From == a.Name {
+		a.Balance -= transaction.Sum
+	}
+	if transaction.To == a.Name {
+		a.Balance += transaction.Sum
+	}
+	return a
+}
+
+func Find[A any](items []A, predicate func(A) bool) (value A, found bool) {
+	for _, v := range items {
+		if predicate(v) {
+			return v, true
 		}
 	}
-	return balance
+	return
 }
